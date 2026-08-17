@@ -35,3 +35,88 @@ a{
     font-size: 14px;
     color: #cccccc;
 }
+
+/* --- fuentes generales --- */
+h1, h2, h3 {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #1a1a1a;
+}
+
+.hero { /* --- seccion hero--- */
+  background-color: #2b2b2b;
+  color: #ffffff;
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.hero h1 {
+  color: #ffffff;
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  color: #cccccc;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.logo { /* --- logo y nav bar--- */
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ff7a00;
+}
+
+.logo span {
+  color: #ffffff;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+nav ul li a {
+  color: #ffffff;
+  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+nav ul li a:hover {
+  background-color: #ff7a00;
+  color: #1a1a1a;
+}
+
+.servicios { /* --- tarjetas de servicios --- */
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.servicios h2 {
+  margin-bottom: 40px;
+  font-size: 2rem;
+}
+
+.grid-servicios {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.tarjeta-servicio {
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-left: 5px solid #ff7a00;
+  border-radius: 6px;
+  padding: 25px;
+  width: 250px;
+  text-align: left;
+}
+
+.tarjeta-servicio h3 {
+  color: #ff7a00;
+  margin-bottom: 10px;
+}
