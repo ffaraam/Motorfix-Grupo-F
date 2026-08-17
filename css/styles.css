@@ -142,3 +142,20 @@ main > p.subtitulo {
   color: #555555;
   margin-bottom: 30px;
 }
+
+/* ============================================
+        boton para ir a iniciar sesion
+   ============================================ */
+.boton-principal {
+  display: inline-block;
+  background-color: #ff7a00;
+  color: #1a1a1a;
+  font-weight: bold;
+  padding: 14px 32px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+}
+
+.boton-principal:hover {
+  background-color: #e56d00;
+}
