@@ -3,26 +3,82 @@
 <head> <meta charset="UTF-8">
   <title>MotorFix</title>
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="css/styles.css"> 
+   <link rel="stylesheet" href="css/styles.css"> <!-- conexion con css-->
 </head> 
-<body>
-    <header>
+ <body>
+    <header> <!-- encabezado de pagina-->
         <div class="header-con"></div>
+        <div class="logo">Motor<span>Fix</span></div> <!-- logo -->
         <nav> 
             <ul>
                 <li><a href="index.html">inicio </a> </li>
-                <li><a href="pages/pagina3.html">solicitar turno </a></li>
                 <li><a href="pages/pagina4.html"> mis turnos </a></li>
                 <li><a href="pages/pagina1.html">iniciar sesion</a></li>
             </ul>
         </nav>
         </div>
     </header> 
-   <main>
-      <section class="hero">
+
+   <main style="max-width: none; padding: 0;">
+
+      <section class="hero"> <!-- el boton te lleva a iniciar sesion -->
         <h1> Tu turno al instante</h1>
         <p>reserva online, sin llamadas y segui el estado de tu auto en tiempo real</p>
         <a href="pages/pagina1.html" class="boton-sesion"> solicitar turno</a>
+      </section>
 
+      <section class="servicios"> <!-- servicios que ofrecemos -->
+          <h2>Nuestros servicios</h2>
+          <div class="grid-servicios">
+
+            <Article class="tarjeta-servicio">
+              <h3> Cambio de aceite </h3>
+              <p> cambio de aceite y filtro con productos de calidad, en menos de 30minutos </p> 
+            </Article>
+
+            <Article class="tarjeta-servicio">
+              <h3>Alineación y Balanceo</h3>
+              <p>Alineación de tren delantero con equipo computarizado de alta precisión.</p>
+            </Article>
+             
+            <article class="tarjeta-servicio">
+              <h3>Frenos</h3>
+              <p>Revisión, cambio de pastillas y discos. Seguridad garantizada en cada frenada.</p>
+            </article>
+        </div>
       </section>
     
+      </div>
+    </section>
+
+    <section class="servicios" style="background-color: #ffffff;">
+      <h2>¿Por qué elegir MotorFix?</h2>
+      <div class="grid-servicios">
+
+        <article class="tarjeta-servicio">
+          <h3>100% Digital</h3>
+          <p>Sacá tu turno desde el celular, sin llamar ni esperar en el mostrador.</p>
+        </article>
+
+        <article class="tarjeta-servicio">
+          <h3>Seguimiento en Vivo</h3>
+          <p>Consultá el estado de tu vehículo en cualquier momento desde "Mis Turnos".</p>
+        </article>
+
+        <article class="tarjeta-servicio">
+          <h3>Elevadores Disponibles</h3>
+          <p>Vas a poder confirmar tu turno según la disponibilidad real de fosas y horarios.</p>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+<!-- pie de pagina-->
+  <footer> 
+    <p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p>
+  </footer>
+
+ </body>
+</html>

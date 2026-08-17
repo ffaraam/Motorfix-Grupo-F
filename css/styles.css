@@ -21,3 +21,26 @@ a{
     text-decoration: none;
     color: inherit;
 }
+
+h1, h2, h3 {  /* --- fuente general --- */
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #1a1a1a;
+}
+
+.header-con { /* --- organiza el header --- */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logo { /* --- estilo del logo --- */
+  display: flex;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ff7a00;
+}
+
+.logo span {
+  color: #ffffff;
+}
