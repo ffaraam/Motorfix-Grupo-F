@@ -8,6 +8,9 @@ header {
     background-color: black;
     color: mintcream;
     padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 body {
@@ -119,4 +122,23 @@ nav ul li a:hover {
 .tarjeta-servicio h3 {
   color: #ff7a00;
   margin-bottom: 10px;
+}
+
+/* ============================================
+   MAIN GENÉRICO (páginas internas)
+   ============================================ */
+main {
+  padding: 50px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+main h1 {
+  margin-bottom: 10px;
+  font-size: 2rem;
+}
+
+main > p.subtitulo {
+  color: #555555;
+  margin-bottom: 30px;
 }
