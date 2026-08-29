@@ -39,6 +39,22 @@ a{
     color: #cccccc;
 }
 
+.pagina1-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction:column;
+}
+
+.footer-pagina1 {
+  background-color: #1a1a1a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px;
+    margin-top: auto;
+    font-size: 14px;
+    color: #cccccc;
+}
+
 /* --- fuentes generales --- */
 h1, h2, h3 {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -158,4 +174,19 @@ main > p.subtitulo {
 
 .boton-principal:hover {
   background-color: #e56d00;
+}
+
+.boton-form {
+  display: block;
+  margin: 0 auto;
+  background-color: #ff7a00;
+  color: #1a1a1a;
+  font-weight: bold;
+  padding: 5px 30px;
+  border-radius: 80px;
+  font-size: 1.1rem;
+  margin: 20px auto 0;
+}
+.formulario {
+  text-align: center;
 }
