@@ -8,8 +8,7 @@
 </head>
 <body>
     <header>
-        <div class="header-con"></div>
-        <div class="logo">Motor<span>Fix</span></div>
+        <div class="logo">Motor<span>Fix</span></div><!-- encabezado de pagina-->
         <nav>
             <ul>
                 <li><a href="index.html">inicio </a> </li>
@@ -17,20 +16,27 @@
             </ul>
         </nav>
     </header>
-<div>
-<h1>Iniciar Sesion</h1>
-<p>Accede con tus credenciales para gestionar tus turnos</p>
-<label for="Usuario">Usuario</label> 
-<input type="text" id="Usuario"> 
+<main>
+  <h1>Iniciar Sesion</h1>
+    <p class="subtitulo">Accede con tus credenciales para gestionar tus turnos</p>
 
-<label for="password">Contrasena</label> 
-<input type="password" id="password">
-</div> 
+    <form class="formulario">
+        <div class="campo">
+         <label for="Usuario">Usuario</label> 
+         <input type="text" id="Usuario" placeholder="TuUsuario1234" required> 
+       </div> 
 
-<div>
-    <a href="pagina3.html "> 
-        <button>Ingresar</button> </a> </body> </html>
-</div>
+       <div class="campo">
+         <label for="password">Contrasena</label> 
+         <input type="password" id="password" name="clave" placeholder="********" required>
+       </div>
+
+
+       <a href="pagina3.html "> 
+        <button type="submit" class="boton-form">Ingresar</button></a> 
+        
+    </form>
+</main>
 
 <div>
     <footer class="footer"> 
