@@ -1,0 +1,18 @@
+{
+  "timeZone": "America/Argentina/Buenos_Aires",
+  "quoteBase": 0,
+  "quoteBaseIsSymbolic": false,
+  "currency": "ARS",
+  "maxDailyAppointments": 4,
+  "businessDays": [1, 2, 3, 4, 5, 6],
+  "openingTime": "08:00",
+  "closingTime": "19:00",
+  "slotIntervalMinutes": 60,
+  "lifts": [
+    { "id": "elevador-1", "name": "Elevador 1", "enabled": true },
+    { "id": "elevador-2", "name": "Elevador 2", "enabled": true },
+    { "id": "elevador-3", "name": "Elevador 3", "enabled": true },
+    { "id": "elevador-4", "name": "Elevador 4", "enabled": true }
+  ],
+  "cancellationCutoffHours": 2
+}

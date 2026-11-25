@@ -1,0 +1,6 @@
+{
+  "email": "admin@gmail.com",
+  "nombre": "Jefe de taller",
+  "passwordHash": "$2a$12$i/3A2V9c/WoI7JjiQyJqGOAHbE8mC0dakyQk98G4/EP.0/95z.yYW",
+  "role": "jefe-taller"
+}

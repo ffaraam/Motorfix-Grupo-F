@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Creá tu cuenta de MotorFix para gestionar tus turnos y consultar el estado de tu vehículo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <title>Crear cuenta | MotorFix</title>
+  <link rel="icon" type="image/png" href="../images/faviconmotorfix.png">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="sesion-body">
+  <header class="encabezado">
+    <a class="logo" href="../index.html" aria-label="MotorFix, inicio">Motor<span>Fix</span></a>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="../index.html">Volver al inicio</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="sesion-main registro-main">
+    <section class="sesion-panel registro-panel" aria-labelledby="titulo-registro">
+      <div class="sesion-presentacion registro-presentacion">
+        <p class="sobrelinea">TU TALLER, MÁS CERCA</p>
+        <h1 id="titulo-registro">Creá tu cuenta y mantené todo en marcha.</h1>
+        <p>Con tu cuenta vas a poder organizar tus turnos y consultar el estado de tu vehículo.</p>
+        <div class="sesion-detalle">
+          <span class="sesion-detalle-icono" aria-hidden="true">✓</span>
+          <span>Un espacio simple para gestionar la atención de tu auto.</span>
+        </div>
+        <div class="sesion-acento" aria-hidden="true"></div>
+      </div>
+
+      <div class="sesion-formulario-contenedor registro-formulario-contenedor">
+        <p class="sesion-etiqueta">NUEVO CLIENTE</p>
+        <h2>Crear cuenta</h2>
+        <p class="sesion-ayuda">Completá tus datos para comenzar.</p>
+
+        <form class="sesion-formulario registro-formulario" id="form-registro" novalidate>
+          <div class="campo-sesion">
+            <label for="nombre">Nombre y apellido</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" autocomplete="name" required>
+          </div>
+          <div class="campo-sesion">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" name="email" placeholder="nombre@correo.com" autocomplete="email" required>
+          </div>
+          <div class="campo-sesion">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="Tu número de teléfono" autocomplete="tel" required>
+          </div>
+          <div class="campo-sesion">
+            <label for="nueva-contrasena">Contraseña</label>
+            <input type="password" id="nueva-contrasena" name="contrasena" placeholder="Creá una contraseña" autocomplete="new-password" required>
+          </div>
+          <p class="mensaje-formulario" id="mensaje-registro" role="status" aria-live="polite"></p>
+          <button type="submit" class="boton-sesion">Crear cuenta <span aria-hidden="true">→</span></button>
+        </form>
+
+        <p class="sesion-pie">¿Ya tenés una cuenta? <a href="pagina1.html">Iniciá sesión</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-pagina1">
+    <p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p>
+  </footer>
+  <script src="../js/auth.js" defer></script>
+</body>
+</html>

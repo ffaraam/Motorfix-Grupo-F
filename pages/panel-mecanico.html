@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Agenda de trabajo asignada al elevador del mecánico MotorFix.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <title>Agenda del mecánico | MotorFix</title>
+  <link rel="icon" type="image/png" href="../images/faviconmotorfix.png">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="panel-mecanico-body">
+  <header class="encabezado panel-mecanico-header">
+    <a class="logo" href="../index.html" aria-label="MotorFix, inicio">Motor<span>Fix</span></a>
+    <div class="panel-mecanico-cuenta"><span id="saludo-mecanico">Agenda del mecánico</span><button class="boton-cerrar-sesion" id="cerrar-sesion" type="button">Cerrar sesión</button></div>
+  </header>
+
+  <main class="panel-mecanico-main">
+    <section class="panel-mecanico-intro">
+      <div><p class="sobrelinea">AGENDA DE TRABAJO</p><h1>Mis trabajos asignados</h1><p>Acá ves los servicios aprobados que corresponden a tu elevador.</p></div>
+      <div class="mecanico-elevador-resumen"><span>Tu elevador</span><strong id="elevador-mecanico">Cargando…</strong></div>
+    </section>
+
+    <section class="panel-mecanico-listado" aria-labelledby="titulo-trabajos">
+      <div class="panel-mecanico-listado-top"><div><p class="sesion-etiqueta">SERVICIOS CONFIRMADOS</p><h2 id="titulo-trabajos">Próximos trabajos</h2></div><button type="button" class="boton-actualizar" id="actualizar-trabajos">Actualizar agenda</button></div>
+      <p class="panel-mecanico-mensaje" id="mensaje-trabajos" role="status" aria-live="polite">Cargando agenda…</p>
+      <section class="tarjetas-trabajos-mecanico" id="lista-trabajos" aria-label="Trabajos asignados"><div class="trabajo-mecanico-cargando">Cargando…</div></section>
+    </section>
+  </main>
+
+  <footer class="footer footer-inicio"><a class="logo" href="../index.html">Motor<span>Fix</span></a><p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p><a href="../index.html">Volver al inicio</a></footer>
+  <script src="../js/panel-mecanico.js" defer></script>
+</body>
+</html>

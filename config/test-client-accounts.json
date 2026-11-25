@@ -1,0 +1,16 @@
+[
+  {
+    "email": "cliente1@motorfix.local",
+    "nombre": "Cliente de prueba 1",
+    "telefono": "1100000001",
+    "passwordHash": "$2a$12$uWWmAr6Afg1r6BJaJp34qudXdzje9YVYmbCLQOZIiROISohZ6l6im",
+    "role": "cliente"
+  },
+  {
+    "email": "cliente2@motorfix.local",
+    "nombre": "Cliente de prueba 2",
+    "telefono": "1100000002",
+    "passwordHash": "$2a$12$smzAMvoxOdezp5MfG4fVzOZHH4ebEMJpE0Vb/w6cEHU3sK0d3r/fe",
+    "role": "cliente"
+  }
+]

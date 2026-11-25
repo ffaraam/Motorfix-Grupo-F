@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Consultá tus solicitudes de turnos y el estado de las revisiones de MotorFix.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <title>Mis turnos | MotorFix</title>
+  <link rel="icon" type="image/png" href="../images/faviconmotorfix.png">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="panel-usuario-body">
+  <header class="encabezado panel-usuario-header">
+    <a class="logo" href="../index.html" aria-label="MotorFix, inicio">Motor<span>Fix</span></a>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a class="enlace-reservar" href="pagina3.html">Solicitar turno</a></li>
+        <li><button class="boton-cerrar-sesion" id="cerrar-sesion" type="button">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="panel-usuario-main">
+    <section class="panel-usuario-intro">
+      <div>
+        <p class="sobrelinea">TU ESPACIO MOTORFIX</p>
+        <h1>Mis turnos</h1>
+        <p id="saludo-usuario">Acá podés consultar tus solicitudes y la respuesta del taller.</p>
+      </div>
+      <a class="boton-principal" href="pagina3.html">Solicitar un turno <span aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="panel-usuario-estado" aria-label="Información sobre las solicitudes">
+      <span class="estado-info-icono" aria-hidden="true">i</span>
+      <p>El jefe de taller revisa cada solicitud. La lista se actualiza automáticamente; las aprobaciones y rechazos muestran cuánto tiempo pasó desde la respuesta.</p>
+    </section>
+
+    <div class="panel-usuario-lista-top">
+      <div><p class="sesion-etiqueta">HISTORIAL</p><h2>Tus solicitudes</h2></div>
+      <button type="button" class="boton-actualizar" id="actualizar-mis-turnos">Actualizar</button>
+    </div>
+    <p class="panel-usuario-mensaje" id="mensaje-mis-turnos" role="status" aria-live="polite">Cargando tus turnos…</p>
+    <section class="tarjetas-mis-turnos" id="lista-mis-turnos" aria-label="Lista de turnos">
+      <div class="turno-cargando">Cargando…</div>
+    </section>
+  </main>
+
+  <footer class="footer footer-inicio"><a class="logo" href="../index.html">Motor<span>Fix</span></a><p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p><a href="../index.html">Volver al inicio</a></footer>
+  <script src="../js/panel-usuario.js" defer></script>
+</body>
+</html>

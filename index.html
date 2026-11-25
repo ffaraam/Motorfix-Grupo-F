@@ -1,78 +1,100 @@
 <!DOCTYPE html>
 <html lang="es">
-<head> <meta charset="UTF-8">
-  <title>MotorFix</title>
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="css/styles.css"> <!-- conexion con css-->
-</head> 
- <body>
-    <header>
-        <div class="logo">Motor<span>Fix</span></div><!-- encabezado de pagina-->
-        <nav>
-            <ul>
-                <li><a href="index.html">inicio </a> </li>
-                <li><a href="pages/pagina1.html">iniciar sesion</a></li>
-            </ul>
-        </nav>
-    </header>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MotorFix: mantenimiento y reparación de vehículos con turnos online y seguimiento del estado de tu auto.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <title>MotorFix | Cuidamos tu auto</title>
+  <link rel="icon" type="image/png" href="images/faviconmotorfix.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="inicio-body">
+  <header class="encabezado">
+    <a class="logo" href="index.html" aria-label="MotorFix, inicio">Motor<span>Fix</span></a>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#como-funciona">Cómo funciona</a></li>
+        <li><a class="nav-ingresar" href="pages/pagina1.html">Iniciar sesión</a></li>
+      </ul>
+    </nav>
+  </header>
 
-   <main style="max-width: none; padding: 0;">
-
-      <section class="hero"> <!-- el boton te lleva a iniciar sesion -->
-        <h1> Tu turno al instante</h1>
-        <p>reserva online, sin llamadas y segui el estado de tu auto en tiempo real</p>
-        <a href="pages/pagina1.html" class="boton-principal"> solicitar turno</a>
+  <main class="inicio-main">
+    <section class="hero-inicio">
+      <div class="hero-contenido">
+        <p class="sobrelinea">TALLER MECÁNICO INTEGRAL</p>
+        <h1>Tu auto en buenas manos. Tu turno, más fácil.</h1>
+        <p class="hero-descripcion">En MotorFix cuidamos tu vehículo con atención clara y organizada. Elegí el servicio, consultá la disponibilidad y seguí el avance del trabajo.</p>
+        <div class="hero-acciones">
+          <a href="pages/pagina1.html" class="boton-principal">Quiero pedir un turno</a>
+          <a href="#servicios" class="enlace-secundario">Conocer los servicios <span aria-hidden="true">↓</span></a>
+        </div>
+        <p class="hero-nota">Mantenimiento y reparación para que sigas tu camino con confianza.</p>
+      </div>
+      <div class="hero-visual">
+        <img src="images/motorfix-taller.jpg" alt="Mecánico revisando el motor de un auto con una computadora en el taller">
+        <div class="hero-etiqueta"><span class="punto-activo"></span> Servicio confiable, paso a paso</div>
+      </div>
     </section>
-    
-<section class="servicios">
-      <h2>Nuestros Servicios</h2>
+
+    <section class="intro-servicios" id="servicios">
+      <div class="encabezado-seccion">
+        <p class="sobrelinea">LO QUE TU AUTO NECESITA</p>
+        <h2>Mecánica esencial, con atención cercana</h2>
+        <p>Te ayudamos a mantener tu vehículo seguro y en condiciones, con servicios de taller pensados para el uso de todos los días.</p>
+      </div>
       <div class="grid-servicios">
-
         <article class="tarjeta-servicio">
-          <h3>Cambio de Aceite</h3>
-          <p>Cambio de aceite y filtro con productos de calidad, en menos de 30 minutos.</p>
+          <span class="servicio-numero">01</span>
+          <h3>Cambio de aceite</h3>
+          <p>Mantenimiento de aceite y filtro para ayudar a proteger el motor y prolongar su vida útil.</p>
+          <span class="servicio-linea" aria-hidden="true"></span>
         </article>
-
         <article class="tarjeta-servicio">
-          <h3>Alineación y Balanceo</h3>
-          <p>Alineación de tren delantero con equipo computarizado de alta precisión.</p>
+          <span class="servicio-numero">02</span>
+          <h3>Alineación</h3>
+          <p>Revisión y ajuste de la dirección para una conducción más pareja y un desgaste adecuado de los neumáticos.</p>
+          <span class="servicio-linea" aria-hidden="true"></span>
         </article>
-
         <article class="tarjeta-servicio">
+          <span class="servicio-numero">03</span>
           <h3>Frenos</h3>
-          <p>Revisión, cambio de pastillas y discos. Seguridad garantizada en cada frenada.</p>
+          <p>Control del sistema de frenos y revisión de sus componentes para acompañar cada viaje con seguridad.</p>
+          <span class="servicio-linea" aria-hidden="true"></span>
         </article>
-
       </div>
+      <p class="nota-servicios">¿Necesitás otro trabajo? Consultanos al solicitar tu turno.</p>
     </section>
 
-    <section class="servicios" style="background-color: #ffffff;">
-      <h2>¿Por qué elegir MotorFix?</h2>
-      <div class="grid-servicios">
-
-        <article class="tarjeta-servicio">
-          <h3>100% Digital</h3>
-          <p>Sacá tu turno desde el celular, sin llamar ni esperar en el mostrador.</p>
-        </article>
-
-        <article class="tarjeta-servicio">
-          <h3>Seguimiento en Vivo</h3>
-          <p>Consultá el estado de tu vehículo en cualquier momento desde "Mis Turnos".</p>
-        </article>
-
-        <article class="tarjeta-servicio">
-          <h3>Elevadores Disponibles</h3>
-          <p>Vas a poder confirmar tu turno según la disponibilidad real de fosas y horarios.</p>
-        </article>
-
+    <section class="como-funciona" id="como-funciona">
+      <div class="como-texto">
+        <p class="sobrelinea">UNA EXPERIENCIA MÁS SIMPLE</p>
+        <h2>Así funciona MotorFix</h2>
+        <p>Organizamos la atención para que sepas qué esperar desde que pedís el turno hasta que tu auto está listo.</p>
+        <a href="pages/pagina1.html" class="boton-principal">Empezar ahora</a>
       </div>
+      <ol class="pasos-lista">
+        <li><span class="paso-indice">1</span><div><h3>Elegí el servicio</h3><p>Contanos qué necesita tu vehículo y sus datos básicos.</p></div></li>
+        <li><span class="paso-indice">2</span><div><h3>Revisá la disponibilidad</h3><p>Consultá los horarios disponibles antes de confirmar tu visita.</p></div></li>
+        <li><span class="paso-indice">3</span><div><h3>Seguí el estado</h3><p>Consultá el avance del trabajo y cuándo está listo para retirar.</p></div></li>
+      </ol>
     </section>
 
+    <section class="cierre-inicio">
+      <p class="sobrelinea">MOTORFIX · TALLER MECÁNICO INTEGRAL</p>
+      <h2>Estamos para ayudarte a seguir en marcha.</h2>
+      <a href="pages/pagina1.html" class="boton-principal">Solicitar un turno</a>
+    </section>
   </main>
 
-  <footer class="footer">
+  <footer class="footer footer-inicio">
+    <a class="logo" href="index.html">Motor<span>Fix</span></a>
     <p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p>
+    <a href="pages/pagina1.html">Acceso de clientes</a>
   </footer>
-
 </body>
 </html>

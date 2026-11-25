@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel privado del jefe de taller MotorFix para revisar solicitudes de turnos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <title>Panel del taller | MotorFix</title>
+  <link rel="icon" type="image/png" href="../images/faviconmotorfix.png">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="panel-jefe-body">
+  <header class="encabezado panel-jefe-header">
+    <a class="logo" href="../index.html" aria-label="MotorFix, inicio">Motor<span>Fix</span></a>
+    <div class="panel-jefe-cuenta"><span id="saludo-jefe">Panel del taller</span><button class="boton-cerrar-sesion" id="cerrar-sesion" type="button">Cerrar sesión</button></div>
+  </header>
+
+  <main class="panel-jefe-main">
+    <section class="panel-jefe-intro">
+      <div><p class="sobrelinea">GESTIÓN DEL TALLER</p><h1>Solicitudes de turnos</h1><p>Revisá cada solicitud, asigná un elevador disponible y aprobá o rechazá el turno.</p></div>
+      <div class="panel-jefe-horario"><strong>Atención</strong><span>Lunes a sábado · 08:00 a 19:00</span><span>Capacidad: hasta 4 turnos por día</span></div>
+    </section>
+
+    <section class="panel-jefe-resumen" aria-label="Resumen de solicitudes">
+      <article><span>Pendientes</span><strong id="cuenta-pendientes">—</strong></article>
+      <article><span>Aprobadas</span><strong id="cuenta-aprobadas">—</strong></article>
+      <article><span>Finalizadas</span><strong id="cuenta-finalizadas">—</strong></article>
+      <article><span>Rechazadas</span><strong id="cuenta-rechazadas">—</strong></article>
+    </section>
+
+    <section class="panel-elevadores" aria-labelledby="titulo-elevadores">
+      <div class="panel-elevadores-top">
+        <div><p class="sesion-etiqueta">CAPACIDAD DEL TALLER</p><h2 id="titulo-elevadores">Elevadores</h2><p>El estado refleja los turnos que están en curso hoy. Podés deshabilitar un elevador para que no reciba nuevas asignaciones.</p></div>
+        <button type="button" class="boton-actualizar" id="actualizar-elevadores">Actualizar elevadores</button>
+      </div>
+      <p class="panel-elevadores-mensaje" id="mensaje-elevadores" role="status" aria-live="polite"></p>
+      <div class="tarjetas-elevadores" id="lista-elevadores" aria-live="polite"><p class="elevadores-cargando">Cargando elevadores…</p></div>
+    </section>
+
+    <section class="panel-mecanicos-asignacion" aria-labelledby="titulo-mecanicos">
+      <div class="panel-mecanicos-asignacion-top">
+        <div><p class="sesion-etiqueta">PERSONAL DEL TALLER</p><h2 id="titulo-mecanicos">Asignación de mecánicos</h2><p>Cada mecánico queda asociado a un elevador. Si asignás uno a un elevador ocupado por otro mecánico, se intercambian las asignaciones.</p></div>
+        <button type="button" class="boton-actualizar" id="actualizar-mecanicos">Actualizar mecánicos</button>
+      </div>
+      <p class="panel-mecanicos-mensaje" id="mensaje-mecanicos" role="status" aria-live="polite"></p>
+      <div class="tarjetas-asignacion-mecanicos" id="lista-mecanicos" aria-live="polite"><p class="mecanicos-cargando">Cargando mecánicos…</p></div>
+    </section>
+
+    <section class="panel-jefe-listado" aria-labelledby="titulo-listado">
+      <div class="panel-jefe-listado-top">
+        <div><p class="sesion-etiqueta">AGENDA</p><h2 id="titulo-listado">Turnos solicitados</h2></div>
+        <button type="button" class="boton-actualizar" id="actualizar-turnos">Actualizar lista</button>
+      </div>
+      <div class="panel-jefe-filtros" role="group" aria-label="Filtrar solicitudes">
+        <button type="button" class="filtro-turno activo" data-filtro="todos" aria-pressed="true">Todos</button>
+        <button type="button" class="filtro-turno" data-filtro="solicitado" aria-pressed="false">Pendientes</button>
+        <button type="button" class="filtro-turno" data-filtro="confirmado" aria-pressed="false">Aprobados</button>
+        <button type="button" class="filtro-turno" data-filtro="finalizado" aria-pressed="false">Finalizados</button>
+        <button type="button" class="filtro-turno" data-filtro="rechazado" aria-pressed="false">Rechazados</button>
+      </div>
+      <p class="panel-jefe-mensaje" id="mensaje-panel" role="status" aria-live="polite">Cargando solicitudes…</p>
+      <div class="tabla-turnos-contenedor">
+        <table class="tabla-turnos">
+          <thead><tr><th>Comprobante</th><th>Cliente</th><th>Teléfono</th><th>Horario</th><th>Elevador</th><th>Auto</th><th>Servicio</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="lista-turnos"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer footer-inicio"><a class="logo" href="../index.html">Motor<span>Fix</span></a><p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p><a href="../index.html">Volver al inicio</a></footer>
+  <script src="../js/panel-jefe.js" defer></script>
+</body>
+</html>

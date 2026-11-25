@@ -1,0 +1,72 @@
+[
+  {
+    "id": "cambio-aceite-filtros",
+    "name": "Cambio de aceite y filtros",
+    "description": "Aceite de motor y filtros de aceite, aire, combustible y habitáculo.",
+    "enabled": true,
+    "suppliesAvailable": true,
+    "durationMinutes": 60,
+    "durationIsProvisional": false,
+    "estimatedPrice": 160000
+  },
+  {
+    "id": "frenos",
+    "name": "Frenos",
+    "description": "Revisión y cambio de pastillas, discos, tambores, zapatas y líquido de frenos.",
+    "enabled": true,
+    "suppliesAvailable": true,
+    "durationMinutes": 120,
+    "durationIsProvisional": false,
+    "estimatedPrice": 225000
+  },
+  {
+    "id": "alineacion-balanceo",
+    "name": "Alineación y balanceo",
+    "description": "Ajuste de dirección y equilibrado de ruedas para reducir el desgaste irregular.",
+    "enabled": true,
+    "suppliesAvailable": true,
+    "durationMinutes": 60,
+    "durationIsProvisional": false,
+    "estimatedPrice": 72500
+  },
+  {
+    "id": "suspension-direccion",
+    "name": "Suspensión y dirección",
+    "description": "Revisión y cambio de amortiguadores, rótulas, bujes, extremos y bieletas.",
+    "enabled": true,
+    "suppliesAvailable": true,
+    "durationMinutes": 240,
+    "durationIsProvisional": false,
+    "estimatedPrice": 450000
+  },
+  {
+    "id": "sistema-electrico",
+    "name": "Sistema eléctrico",
+    "description": "Diagnóstico y cambio de batería, alternador, motor de arranque, luces y fusibles.",
+    "enabled": true,
+    "suppliesAvailable": true,
+    "durationMinutes": 90,
+    "durationIsProvisional": false,
+    "estimatedPrice": 110000
+  },
+  {
+    "id": "diagnostico-obd2",
+    "name": "Diagnóstico con scanner (OBD2)",
+    "description": "Lectura de códigos de falla, control de sensores y luces testigo del tablero.",
+    "enabled": true,
+    "suppliesAvailable": true,
+    "durationMinutes": 30,
+    "durationIsProvisional": false,
+    "estimatedPrice": 40000
+  },
+  {
+    "id": "distribucion-correas",
+    "name": "Distribución y correas",
+    "description": "Cambio de kit de distribución, correa de accesorios, tensores y bomba de agua.",
+    "enabled": true,
+    "suppliesAvailable": true,
+    "durationMinutes": 300,
+    "durationIsProvisional": false,
+    "estimatedPrice": 450000
+  }
+]

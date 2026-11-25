@@ -1,25 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de turno</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Elegí uno de los servicios de MotorFix, consultá disponibilidad y solicitá un turno para tu vehículo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <title>Solicitar turno | MotorFix</title>
+  <link rel="icon" type="image/png" href="../images/faviconmotorfix.png">
+  <link rel="stylesheet" href="../css/styles.css">
 </head>
-<body>
-    <header>
-        <div class="header-con"></div>
-        <div class="logo">Motor<span>Fix</span></div>
-        <nav>
-            <ul>
-                <li><a href="index.html">inicio </a> </li>
-                <li><a href="pages/pagina1.html">iniciar sesion</a></li>
-            </ul>
-        </nav>
-    </header>
-    <div>
-        <h1> Solicitar turno </h1>
+<body class="turno-body">
+  <header class="encabezado">
+    <a class="logo" href="../index.html" aria-label="MotorFix, inicio">Motor<span>Fix</span></a>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><span class="saludo-cliente" id="saludo-cliente">Mi cuenta</span></li>
+        <li><a class="enlace-mis-turnos" href="panel-usuario.html">Mis turnos</a></li>
+        <li><button class="boton-cerrar-sesion" id="cerrar-sesion" type="button">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="turno-main">
+    <section class="turno-intro">
+      <div>
+        <p class="sobrelinea">MOTORFIX · ATENCIÓN PARA TU AUTO</p>
+        <h1>Solicitá tu turno</h1>
+        <p>Elegí el servicio, cargá los datos del vehículo y seleccioná un horario disponible. El jefe de taller revisará tu solicitud.</p>
+      </div>
+      <div class="turno-reglas" aria-label="Horario y capacidad del taller">
+        <span><strong>Lun. a sáb.</strong> · 08:00 a 19:00</span>
+        <span><strong>4 turnos</strong> por día</span>
+      </div>
+    </section>
+
+    <div class="turno-layout">
+      <form class="turno-form" id="form-turno">
+        <section class="turno-seccion" aria-labelledby="titulo-servicio">
+          <div class="turno-seccion-titulo">
+            <span class="turno-numero">01</span>
+            <div><h2 id="titulo-servicio">¿Qué necesita tu auto?</h2><p>Elegí el servicio que querés realizar.</p></div>
+          </div>
+          <div class="opciones-servicio" id="opciones-servicio" aria-live="polite">
+            <p class="cargando-servicios">Cargando servicios del taller…</p>
+          </div>
+        </section>
+
+        <section class="turno-seccion" aria-labelledby="titulo-vehiculo">
+          <div class="turno-seccion-titulo">
+            <span class="turno-numero">02</span>
+            <div><h2 id="titulo-vehiculo">Datos del vehículo</h2><p>Así podemos identificar tu auto al recibirlo.</p></div>
+          </div>
+          <div class="turno-campos-grid">
+            <div class="campo-turno"><label for="marca">Marca</label><input id="marca" name="marca" type="text" placeholder="Ej.: Toyota" autocomplete="off" maxlength="50" required></div>
+            <div class="campo-turno"><label for="modelo">Modelo</label><input id="modelo" name="modelo" type="text" placeholder="Ej.: Corolla" autocomplete="off" maxlength="50" required></div>
+          </div>
+        </section>
+
+        <section class="turno-seccion" aria-labelledby="titulo-preferencia">
+          <div class="turno-seccion-titulo">
+            <span class="turno-numero">03</span>
+            <div><h2 id="titulo-preferencia">Elegí fecha y horario</h2><p>Seleccioná una opción disponible; el jefe de taller asignará el elevador.</p></div>
+          </div>
+          <div class="turno-campos-grid">
+            <div class="campo-turno"><label for="fecha">Fecha del turno</label><input id="fecha" name="fecha" type="date" required></div>
+            <div class="campo-turno"><label for="horario">Horario</label>
+              <select id="horario" name="horario" required disabled>
+                <option value="">Elegí servicio y fecha primero</option>
+              </select>
+              <small class="ayuda-campo">Solo se muestran opciones disponibles al consultar.</small>
+            </div>
+          </div>
+        </section>
+
+        <div class="turno-acciones">
+          <p>El turno queda pendiente hasta que el jefe de taller lo revise y asigne un elevador.</p>
+          <button class="boton-sesion boton-turno" type="submit" disabled>Solicitar turno <span aria-hidden="true">→</span></button>
+        </div>
+      </form>
+
+      <aside class="resumen-turno" aria-labelledby="titulo-resumen">
+        <p class="sesion-etiqueta">RESUMEN</p>
+        <h2 id="titulo-resumen">Tu solicitud</h2>
+        <div class="resumen-detalle"><span>Servicio</span><strong id="resumen-servicio">Aún sin elegir</strong></div>
+        <div class="resumen-detalle"><span>Vehículo</span><strong id="resumen-vehiculo">A completar</strong></div>
+        <div class="resumen-detalle"><span>Preferencia</span><strong id="resumen-fecha">A seleccionar</strong></div>
+        <div class="resumen-costo"><span>Precio del servicio</span><strong id="resumen-costo">A cotizar</strong><small id="detalle-costo">El precio se actualiza al seleccionar un servicio.</small></div>
+        <div class="resumen-nota"><span aria-hidden="true">i</span><p>El jefe de taller aprobará o rechazará tu solicitud. Podés cancelar hasta 2 horas antes; por ahora, coordiná la cancelación directamente con MotorFix.</p></div>
+        <p class="mensaje-formulario" id="mensaje-turno" role="status" aria-live="polite"></p>
+        <div class="comprobante-turno" id="comprobante-turno" hidden>
+          <p class="sesion-etiqueta">COMPROBANTE</p>
+          <strong id="comprobante-id"></strong>
+          <span id="comprobante-detalle"></span>
+        </div>
+      </aside>
     </div>
-    
+  </main>
+
+  <footer class="footer footer-inicio"><a class="logo" href="../index.html">Motor<span>Fix</span></a><p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p><a href="../index.html">Volver al inicio</a></footer>
+  <script src="../js/turnos.js" defer></script>
 </body>
 </html>

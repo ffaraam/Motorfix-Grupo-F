@@ -1,0 +1,34 @@
+[
+  {
+    "key": "mecanico-1",
+    "email": "motorfix1@gmail.com",
+    "nombre": "Mecánico 1",
+    "passwordHash": "$2a$12$GKbTAFpc4dbLtBQ7XJ2JJu1HWRMwmlTsyDpq/6ZJkfOMMpwlNainS",
+    "role": "mecanico",
+    "liftId": "elevador-1"
+  },
+  {
+    "key": "mecanico-2",
+    "email": "motorfix2@gmail.com",
+    "nombre": "Mecánico 2",
+    "passwordHash": "$2a$12$pFZbJhX/1iWfvTfpGig36eLMLNgocwhWuZJf4oxQQzdzQuptdZ3ty",
+    "role": "mecanico",
+    "liftId": "elevador-2"
+  },
+  {
+    "key": "mecanico-3",
+    "email": "motorfix3@gmail.com",
+    "nombre": "Mecánico 3",
+    "passwordHash": "$2a$12$56MOP5rp1S/exqSacSV4S.9.k4TwX.lNoXwQLgFbsQjoQ8If32qrW",
+    "role": "mecanico",
+    "liftId": "elevador-3"
+  },
+  {
+    "key": "mecanico-4",
+    "email": "motorfix4@gmail.com",
+    "nombre": "Mecánico 4",
+    "passwordHash": "$2a$12$DMt2.tqhgp05/AepaEAWNemj./S5lnQ/Z64PXHcQg5z2DMlM6DACG",
+    "role": "mecanico",
+    "liftId": "elevador-4"
+  }
+]

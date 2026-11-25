@@ -1,45 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesion</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Iniciá sesión en MotorFix para gestionar tus turnos y consultar el estado de tu vehículo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <title>Iniciar sesión | MotorFix</title>
+  <link rel="icon" type="image/png" href="../images/faviconmotorfix.png">
+  <link rel="stylesheet" href="../css/styles.css">
 </head>
-<body class="pagina1-body">
-    <header>
-        <div class="logo">Motor<span>Fix</span></div><!-- encabezado de pagina-->
-        <nav>
-            <ul>
-                <li><a href="index.html">inicio </a> </li>
-                <li><a href="pages/pagina1.html">iniciar sesion</a></li>
-            </ul>
-        </nav>
-    </header>
-<main>
-  <h1 style="text-align: center;">Iniciar Sesion</h1>
-    <p style="text-align: center;" class="subtitulo">Accede con tus credenciales para gestionar tus turnos</p>
+<body class="sesion-body">
+  <header class="encabezado">
+    <a class="logo" href="../index.html" aria-label="MotorFix, inicio">Motor<span>Fix</span></a>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="../index.html">Volver al inicio</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <form class="formulario">
-        <div class="campo">
-         <label for="Usuario">Usuario</label> 
-         <input type="text" id="Usuario" placeholder="TuUsuario1234" required> 
-       </div> 
+  <main class="sesion-main">
+    <section class="sesion-panel" aria-labelledby="titulo-sesion">
+      <div class="sesion-presentacion">
+        <p class="sobrelinea">TU TALLER, MÁS CERCA</p>
+        <h1 id="titulo-sesion">Bienvenido a <span class="sesion-marca">Motor<span>Fix</span></span></h1>
+        <p>Ingresá a tu cuenta para acceder a las herramientas de tu rol en MotorFix.</p>
+        <div class="sesion-detalle">
+          <span class="sesion-detalle-icono" aria-hidden="true">✓</span>
+          <span>Todo lo relacionado con tu auto, en un solo lugar.</span>
+        </div>
+        <div class="sesion-acento" aria-hidden="true"></div>
+      </div>
 
-       <div class="campo">
-         <label for="password">Contrasena</label> 
-         <input type="password" id="password" name="clave" placeholder="********" required>
-       </div>
+      <div class="sesion-formulario-contenedor">
+        <p class="sesion-etiqueta">ACCESO A MOTORFIX</p>
+        <h2>Iniciar sesión</h2>
+        <p class="sesion-ayuda">Completá tus datos para continuar.</p>
 
+        <form class="sesion-formulario" id="form-login" novalidate>
+          <div class="campo-sesion">
+            <label for="email-login">Correo electrónico</label>
+            <input type="email" id="email-login" name="email" placeholder="nombre@correo.com" autocomplete="email" required>
+          </div>
+          <div class="campo-sesion">
+            <label for="contrasena">Contraseña</label>
+            <input type="password" id="contrasena" name="contrasena" placeholder="Ingresá tu contraseña" autocomplete="current-password" required>
+          </div>
+          <p class="mensaje-formulario" id="mensaje-login" role="status" aria-live="polite"></p>
+          <button type="submit" class="boton-sesion">Ingresar <span aria-hidden="true">→</span></button>
+        </form>
 
-       <a href="pagina3.html "> 
-        <button type="submit" class="boton-form">Ingresar</button></a> 
-        
-    </form>
-</main>
+        <p class="sesion-pie">¿Todavía no tenés una cuenta? <a href="registro.html">Hacé clic para registrarte.</a></p>
+      </div>
+    </section>
+  </main>
 
-<footer class="footer-pagina1"> 
-<p>2026 Motorfix - Taller Mecanico Integral Practicas Profesionalizantes. </p> 
-</footer>
+  <footer class="footer-pagina1">
+    <p>&copy; 2026 MotorFix - Taller Mecánico Integral.</p>
+  </footer>
+  <script src="../js/auth.js" defer></script>
 </body>
 </html>
