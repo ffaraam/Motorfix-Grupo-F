@@ -13,6 +13,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 const sessionSecret = process.env.SESSION_SECRET;
 const FileStore = FileStoreFactory(session);
 
+// Render terminates HTTPS at its proxy; trust it so Secure session cookies are emitted.
+if (isProduction) app.set('trust proxy', 1);
+
 if (!sessionSecret && isProduction) {
   throw new Error('SESSION_SECRET es obligatorio en producción.');
 }
