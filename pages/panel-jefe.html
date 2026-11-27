@@ -19,7 +19,7 @@
 
   <main class="panel-jefe-main">
     <section class="panel-jefe-intro">
-      <div><p class="sobrelinea">GESTIÓN DEL TALLER</p><h1>Solicitudes de turnos</h1><p>Revisá cada solicitud, asigná un elevador disponible y aprobá o rechazá el turno.</p></div>
+        <div><p class="sobrelinea">GESTIÓN DEL TALLER</p><h1>Solicitudes de turnos</h1><p>Revisá solicitudes, asigná elevadores y actualizá el estado del trabajo. La alerta de demora se activa al superar el estimativo por 15 minutos.</p></div>
       <div class="panel-jefe-horario"><strong>Atención</strong><span>Lunes a sábado · 08:00 a 19:00</span><span>Capacidad: hasta 4 turnos por día</span></div>
     </section>
 
@@ -30,6 +30,51 @@
       <article><span>Rechazadas</span><strong id="cuenta-rechazadas">—</strong></article>
     </section>
 
+    <section class="panel-tablero" aria-labelledby="titulo-tablero">
+      <div class="panel-tablero-cabecera"><div><p class="sesion-etiqueta">RESUMEN DE HOY</p><h2 id="titulo-tablero">Tablero del taller</h2></div><p id="fecha-tablero"></p></div>
+      <div class="panel-tablero-grid">
+        <article class="panel-tablero-tarjeta"><h3>Servicios más demandados</h3><p class="panel-tablero-ayuda">Solicitudes activas de hoy</p><ol id="lista-demanda-servicios" class="lista-demanda-servicios"><li>Cargando…</li></ol></article>
+        <article class="panel-tablero-tarjeta panel-mecanicos-disponibles"><h3>Mecánicos disponibles</h3><p class="panel-tablero-contador"><strong id="mecanicos-disponibles">—</strong><span id="mecanicos-total">de —</span></p><p class="panel-tablero-ayuda">Libres en este momento</p><ul id="lista-disponibilidad-mecanicos" class="lista-disponibilidad-mecanicos"><li>Cargando…</li></ul></article>
+      </div>
+      <p class="panel-tablero-nota">Un mecánico figura disponible cuando su elevador está habilitado y no tiene un trabajo aprobado en curso.</p>
+    </section>
+
+    <section class="panel-configuracion-taller" aria-labelledby="titulo-configuracion-taller">
+      <div class="panel-configuracion-taller-top">
+        <div><p class="sesion-etiqueta">CONFIGURACIÓN</p><h2 id="titulo-configuracion-taller">Servicios y horarios</h2><p>Los cambios se aplican a las nuevas solicitudes de turnos.</p></div>
+        <button type="button" class="boton-actualizar" id="recargar-configuracion">Recargar configuración</button>
+      </div>
+      <p class="configuracion-taller-mensaje" id="mensaje-configuracion-taller" role="status" aria-live="polite">Cargando configuración…</p>
+      <form id="form-configuracion-taller">
+        <fieldset class="configuracion-horarios">
+          <legend>Atención y capacidad</legend>
+          <div class="configuracion-horarios-grid">
+            <label>Apertura<input type="time" name="openingTime" required></label>
+            <label>Cierre<input type="time" name="closingTime" required></label>
+            <label>Intervalo entre turnos (min)<input type="number" name="slotIntervalMinutes" min="15" max="240" step="15" required></label>
+            <label>Máximo de turnos por día<input type="number" name="maxDailyAppointments" min="1" max="100" required></label>
+          </div>
+          <fieldset class="configuracion-dias">
+            <legend>Días de atención</legend>
+            <div class="configuracion-dias-lista">
+              <label><input type="checkbox" name="businessDays" value="1"> Lunes</label>
+              <label><input type="checkbox" name="businessDays" value="2"> Martes</label>
+              <label><input type="checkbox" name="businessDays" value="3"> Miércoles</label>
+              <label><input type="checkbox" name="businessDays" value="4"> Jueves</label>
+              <label><input type="checkbox" name="businessDays" value="5"> Viernes</label>
+              <label><input type="checkbox" name="businessDays" value="6"> Sábado</label>
+              <label><input type="checkbox" name="businessDays" value="7"> Domingo</label>
+            </div>
+          </fieldset>
+        </fieldset>
+        <fieldset class="configuracion-servicios">
+          <legend>Catálogo, duración e insumos</legend>
+          <div id="lista-configuracion-servicios" class="lista-configuracion-servicios"></div>
+        </fieldset>
+        <button class="boton-guardar-configuracion" type="submit">Guardar configuración</button>
+      </form>
+    </section>
+
     <section class="panel-elevadores" aria-labelledby="titulo-elevadores">
       <div class="panel-elevadores-top">
         <div><p class="sesion-etiqueta">CAPACIDAD DEL TALLER</p><h2 id="titulo-elevadores">Elevadores</h2><p>El estado refleja los turnos que están en curso hoy. Podés deshabilitar un elevador para que no reciba nuevas asignaciones.</p></div>
@@ -37,6 +82,15 @@
       </div>
       <p class="panel-elevadores-mensaje" id="mensaje-elevadores" role="status" aria-live="polite"></p>
       <div class="tarjetas-elevadores" id="lista-elevadores" aria-live="polite"><p class="elevadores-cargando">Cargando elevadores…</p></div>
+    </section>
+
+    <section class="panel-reporte-diario" aria-labelledby="titulo-reporte-diario">
+      <div class="panel-reporte-diario-top">
+        <div><p class="sesion-etiqueta">OPERACIÓN</p><h2 id="titulo-reporte-diario">Reporte diario de vehículos</h2><p>Vehículos con turnos aprobados o trabajos finalizados en la fecha elegida.</p></div>
+        <div class="controles-reporte-diario"><label for="fecha-reporte-diario">Fecha</label><input id="fecha-reporte-diario" type="date"><button type="button" class="boton-actualizar" id="actualizar-reporte-diario">Ver reporte</button></div>
+      </div>
+      <p class="reporte-diario-mensaje" id="mensaje-reporte-diario" role="status" aria-live="polite">Seleccioná una fecha para consultar el reporte.</p>
+      <div class="tabla-reporte-contenedor"><table class="tabla-reporte"><thead><tr><th>Horario</th><th>Comprobante</th><th>Vehículo</th><th>Servicio</th><th>Elevador</th><th>Estado</th></tr></thead><tbody id="lista-reporte-diario"><tr><td colspan="6">Sin reporte cargado.</td></tr></tbody></table></div>
     </section>
 
     <section class="panel-mecanicos-asignacion" aria-labelledby="titulo-mecanicos">

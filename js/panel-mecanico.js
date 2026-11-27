@@ -1,5 +1,6 @@
 const jobsContainer = document.querySelector('#lista-trabajos');
 const messageElement = document.querySelector('#mensaje-trabajos');
+let lastJobs = [];
 
 function showMessage(message, isError = false) {
   messageElement.textContent = message;
@@ -25,6 +26,7 @@ function detail(label, value) {
 }
 
 function renderJobs(jobs) {
+  lastJobs = jobs;
   jobsContainer.replaceChildren();
   if (!jobs.length) {
     const empty = document.createElement('div');
@@ -60,8 +62,15 @@ function renderJobs(jobs) {
     details.className = 'trabajo-mecanico-detalles';
     details.append(
       detail('Auto', job.vehicleModel),
-      detail('Cliente', job.customerName)
+      detail('Cliente', job.customerName),
+      detail('Estado del vehículo', job.vehicleStatus || 'Aún sin actualizar')
     );
+    if (job.isDelayed) {
+      const delay = document.createElement('p');
+      delay.className = 'alerta-demora-mecanico';
+      delay.textContent = 'Demorado: superó el estimativo por 15 minutos o más.';
+      card.append(delay);
+    }
     card.append(top, heading, date, details);
     jobsContainer.append(card);
   });
@@ -116,3 +125,9 @@ document.querySelector('#cerrar-sesion').addEventListener('click', async () => {
 });
 
 checkMechanicSession().then((isMechanic) => isMechanic && loadJobs());
+window.setInterval(() => {
+  if (document.visibilityState === 'visible') loadJobs();
+}, 30000);
+window.setInterval(() => {
+  if (document.visibilityState === 'visible' && lastJobs.length) renderJobs(lastJobs);
+}, 60000);

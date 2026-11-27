@@ -34,11 +34,15 @@
 
     <section class="panel-usuario-estado" aria-label="Información sobre las solicitudes">
       <span class="estado-info-icono" aria-hidden="true">i</span>
-      <p>El jefe de taller revisa cada solicitud. La lista se actualiza automáticamente; las aprobaciones y rechazos muestran cuánto tiempo pasó desde la respuesta.</p>
+      <p>El jefe de taller revisa cada solicitud y actualiza el estado del vehículo. La lista se actualiza automáticamente; también vas a ver una alerta si el trabajo supera el estimativo por 15 minutos.</p>
     </section>
 
+    <div class="panel-usuario-secciones" role="tablist" aria-label="Turnos e historial">
+      <button type="button" class="filtro-turno activo" id="ver-turnos" data-vista-cliente="turnos" role="tab" aria-selected="true">Mis turnos</button>
+      <button type="button" class="filtro-turno" id="ver-reparaciones" data-vista-cliente="reparaciones" role="tab" aria-selected="false">Reparaciones realizadas</button>
+    </div>
     <div class="panel-usuario-lista-top">
-      <div><p class="sesion-etiqueta">HISTORIAL</p><h2>Tus solicitudes</h2></div>
+      <div><p class="sesion-etiqueta" id="etiqueta-lista-cliente">AGENDA</p><h2 id="titulo-lista-cliente">Tus turnos</h2></div>
       <button type="button" class="boton-actualizar" id="actualizar-mis-turnos">Actualizar</button>
     </div>
     <p class="panel-usuario-mensaje" id="mensaje-mis-turnos" role="status" aria-live="polite">Cargando tus turnos…</p>

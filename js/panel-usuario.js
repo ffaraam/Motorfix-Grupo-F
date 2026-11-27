@@ -1,6 +1,7 @@
 const appointmentsContainer = document.querySelector('#lista-mis-turnos');
 const messageElement = document.querySelector('#mensaje-mis-turnos');
 let appointments = [];
+let activeView = 'turnos';
 
 function showMessage(message, isError = false) {
   messageElement.textContent = message;
@@ -32,6 +33,24 @@ function statusCopy(appointment) {
   return 'Tu solicitud está pendiente de revisión por el jefe de taller.';
 }
 
+function canCancel(appointment) {
+  if (!['solicitado', 'confirmado'].includes(appointment.status)) return false;
+  const [year, month, day] = appointment.date.split('-').map(Number);
+  const [hours, minutes] = appointment.startTime.split(':').map(Number);
+  const start = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+  const local = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Argentina/Buenos_Aires', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(start);
+  const parts = Object.fromEntries(local.filter((part) => part.type !== 'literal').map((part) => [part.type, Number(part.value)]));
+  const offset = Date.UTC(year, month - 1, day, hours, minutes) - Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute);
+  start.setTime(start.getTime() + offset);
+  return start.getTime() - Date.now() >= 2 * 60 * 60 * 1000;
+}
+
+function vehicleStatusCopy(appointment) {
+  if (appointment.vehicleStatus) return `Estado del vehículo: ${appointment.vehicleStatus}.`;
+  if (appointment.status === 'confirmado') return 'El taller todavía no actualizó el estado del vehículo.';
+  return '';
+}
+
 function createDetail(label, value) {
   const detail = document.createElement('div');
   detail.className = 'detalle-mis-turnos';
@@ -45,23 +64,29 @@ function createDetail(label, value) {
 
 function renderAppointments() {
   appointmentsContainer.replaceChildren();
-  if (!appointments.length) {
+  const visibleAppointments = activeView === 'reparaciones'
+    ? appointments.filter((appointment) => appointment.status === 'finalizado')
+    : appointments.filter((appointment) => appointment.status !== 'finalizado');
+  if (!visibleAppointments.length) {
     const empty = document.createElement('div');
     empty.className = 'mis-turnos-vacio';
     const heading = document.createElement('h3');
-    heading.textContent = 'Todavía no tenés turnos';
+    heading.textContent = activeView === 'reparaciones' ? 'Todavía no hay reparaciones realizadas' : 'No tenés turnos pendientes o futuros';
     const copy = document.createElement('p');
-    copy.textContent = 'Cuando envíes una solicitud, vas a poder seguir su estado desde acá.';
-    const link = document.createElement('a');
-    link.className = 'boton-principal';
-    link.href = 'pagina3.html';
-    link.textContent = 'Solicitar un turno';
-    empty.append(heading, copy, link);
+    copy.textContent = activeView === 'reparaciones' ? 'Los trabajos finalizados por el taller aparecerán acá.' : 'Cuando envíes una solicitud, vas a poder seguir su estado desde acá.';
+    empty.append(heading, copy);
+    if (activeView === 'turnos') {
+      const link = document.createElement('a');
+      link.className = 'boton-principal';
+      link.href = 'pagina3.html';
+      link.textContent = 'Solicitar un turno';
+      empty.append(link);
+    }
     appointmentsContainer.append(empty);
     return;
   }
 
-  appointments.forEach((appointment) => {
+  visibleAppointments.forEach((appointment) => {
     const card = document.createElement('article');
     card.className = 'tarjeta-mi-turno';
 
@@ -85,7 +110,8 @@ function renderAppointments() {
     details.className = 'mi-turno-detalles';
     details.append(
       createDetail('Vehículo', `${appointment.vehicle.make} ${appointment.vehicle.model}`),
-      createDetail('Elevador', appointment.liftName || 'A asignar por el jefe')
+      createDetail('Elevador', appointment.liftName || 'A asignar por el jefe'),
+      ...(vehicleStatusCopy(appointment) ? [createDetail('Estado del vehículo', appointment.vehicleStatus || 'Aún sin actualizar')] : [])
     );
 
     const status = document.createElement('p');
@@ -101,6 +127,20 @@ function renderAppointments() {
       : `${appointment.quoteStatus === 'provisoria' ? 'Cotización provisional' : 'Precio del servicio'}: $${new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 }).format(appointment.estimatedTotal)} ${appointment.currency || 'ARS'}`;
 
     card.append(top, heading, date, details, status, quote);
+    if (activeView === 'turnos' && canCancel(appointment)) {
+      const cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.className = 'boton-cancelar-turno';
+      cancel.dataset.cancelAppointment = appointment.id;
+      cancel.textContent = 'Cancelar turno';
+      card.append(cancel);
+    }
+    if (appointment.isDelayed) {
+      const delay = document.createElement('p');
+      delay.className = 'alerta-demora-cliente';
+      delay.textContent = 'El trabajo presenta una demora de 15 minutos o más sobre el estimativo.';
+      card.append(delay);
+    }
     appointmentsContainer.append(card);
   });
 }
@@ -119,7 +159,8 @@ async function loadAppointments() {
     if (!response.ok) throw new Error(result.message || 'No se pudieron cargar tus turnos.');
     appointments = result.appointments;
     renderAppointments();
-    showMessage(appointments.length ? `${appointments.length} turno${appointments.length === 1 ? '' : 's'} en tu historial.` : '');
+    const visibleCount = activeView === 'reparaciones' ? appointments.filter((item) => item.status === 'finalizado').length : appointments.filter((item) => item.status !== 'finalizado').length;
+    showMessage(visibleCount ? `${visibleCount} ${activeView === 'reparaciones' ? 'reparación' : 'turno'}${visibleCount === 1 ? '' : 's'}.` : '');
   } catch (error) {
     showMessage(error.message, true);
   }
@@ -149,6 +190,40 @@ function updateApprovalClocks() {
 }
 
 document.querySelector('#actualizar-mis-turnos').addEventListener('click', loadAppointments);
+appointmentsContainer.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-cancel-appointment]');
+  if (!button) return;
+  button.disabled = true;
+  button.textContent = 'Cancelando…';
+  try {
+    const response = await fetch(`/api/appointments/${encodeURIComponent(button.dataset.cancelAppointment)}/cancel`, {
+      method: 'PATCH', credentials: 'same-origin', headers: { Accept: 'application/json' }
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'No se pudo cancelar el turno.');
+    showMessage(result.message);
+    await loadAppointments();
+  } catch (error) {
+    showMessage(error.message, true);
+    button.disabled = false;
+    button.textContent = 'Cancelar turno';
+  }
+});
+document.querySelector('.panel-usuario-secciones').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-vista-cliente]');
+  if (!button) return;
+  activeView = button.dataset.vistaCliente;
+  document.querySelectorAll('[data-vista-cliente]').forEach((tab) => {
+    const selected = tab === button;
+    tab.classList.toggle('activo', selected);
+    tab.setAttribute('aria-selected', String(selected));
+  });
+  document.querySelector('#etiqueta-lista-cliente').textContent = activeView === 'reparaciones' ? 'HISTORIAL' : 'AGENDA';
+  document.querySelector('#titulo-lista-cliente').textContent = activeView === 'reparaciones' ? 'Reparaciones realizadas' : 'Tus turnos';
+  renderAppointments();
+  const visibleCount = activeView === 'reparaciones' ? appointments.filter((item) => item.status === 'finalizado').length : appointments.filter((item) => item.status !== 'finalizado').length;
+  showMessage(visibleCount ? `${visibleCount} ${activeView === 'reparaciones' ? 'reparación' : 'turno'}${visibleCount === 1 ? '' : 's'}.` : '');
+});
 document.querySelector('#cerrar-sesion').addEventListener('click', async () => {
   try {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });

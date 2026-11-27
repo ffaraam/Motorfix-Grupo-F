@@ -4,16 +4,21 @@ const {
   createAppointment,
   getAvailability,
   getManagementLiftStatuses,
+  getWorkshopDashboard,
   getServices,
   getWorkshop,
   listMechanicsForManagement,
   listAppointmentsForMechanic,
   listAppointmentsForManagement,
   listAppointmentsForUser,
+  cancelAppointment,
+  getDailyVehicleReport,
   updateAppointmentStatus,
+  updateVehicleStatus,
   updateAppointmentLift,
   updateLiftEnabled,
-  assignMechanicToLift
+  assignMechanicToLift,
+  updateWorkshopSettings
 } = require('../services/appointment-store');
 
 const appointmentsRouter = express.Router();
@@ -102,14 +107,57 @@ appointmentsRouter.get('/mine', requireRole('cliente'), async (req, res, next) =
   }
 });
 
+appointmentsRouter.patch('/:appointmentId/cancel', requireRole('cliente'), async (req, res, next) => {
+  try {
+    const appointment = await cancelAppointment(req.params.appointmentId, req.user.id);
+    return res.json({ message: 'Turno cancelado. El horario quedó disponible nuevamente.', appointment: { id: appointment.id, status: appointment.status, cancelledAt: appointment.cancelledAt } });
+  } catch (error) {
+    if (error.code === 'CANCELLATION_CUTOFF') return res.status(422).json({ message: error.message });
+    if (error.code === 'NOT_CANCELLABLE') return res.status(409).json({ message: error.message });
+    return sendAppointmentError(error, res, next);
+  }
+});
+
 appointmentsRouter.get('/management', requireRole('jefe-taller'), async (req, res, next) => {
   try {
-    const [appointments, lifts, mechanics] = await Promise.all([
-      listAppointmentsForManagement(), getManagementLiftStatuses(), listMechanicsForManagement()
+    const [appointments, lifts, mechanics, dashboard] = await Promise.all([
+      listAppointmentsForManagement(), getManagementLiftStatuses(), listMechanicsForManagement(), getWorkshopDashboard()
     ]);
-    return res.json({ appointments, lifts, mechanics });
+    return res.json({ appointments, lifts, mechanics, dashboard });
   } catch (error) {
     return next(error);
+  }
+});
+
+appointmentsRouter.get('/management/settings', requireRole('jefe-taller'), async (req, res, next) => {
+  try {
+    const [services, workshop] = await Promise.all([getServices(), getWorkshop()]);
+    return res.json({ services, workshop: {
+      businessDays: workshop.businessDays,
+      openingTime: workshop.openingTime,
+      closingTime: workshop.closingTime,
+      slotIntervalMinutes: workshop.slotIntervalMinutes,
+      maxDailyAppointments: workshop.maxDailyAppointments
+    } });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+appointmentsRouter.put('/management/settings', requireRole('jefe-taller'), requireJson, async (req, res, next) => {
+  try {
+    const settings = await updateWorkshopSettings(req.body || {});
+    return res.json({ message: 'Configuración del taller guardada.', ...settings });
+  } catch (error) {
+    return sendAppointmentError(error, res, next);
+  }
+});
+
+appointmentsRouter.get('/management/daily-report', requireRole('jefe-taller'), async (req, res, next) => {
+  try {
+    return res.json(await getDailyVehicleReport(req.query.date));
+  } catch (error) {
+    return sendAppointmentError(error, res, next);
   }
 });
 
@@ -129,6 +177,18 @@ appointmentsRouter.get('/mechanic', requireRole('mecanico'), async (req, res, ne
   try {
     const agenda = await listAppointmentsForMechanic(req.user.id);
     return res.json(agenda);
+  } catch (error) {
+    return sendAppointmentError(error, res, next);
+  }
+});
+
+appointmentsRouter.patch('/management/:appointmentId/vehicle-status', requireRole('jefe-taller'), requireJson, async (req, res, next) => {
+  try {
+    const appointment = await updateVehicleStatus(req.params.appointmentId, req.body?.vehicleStatus, req.user.id);
+    return res.json({
+      message: `Estado del vehículo actualizado: ${appointment.vehicleStatus}.`,
+      appointment: { id: appointment.id, status: appointment.status, vehicleStatus: appointment.vehicleStatus, vehicleStatusUpdatedAt: appointment.vehicleStatusUpdatedAt }
+    });
   } catch (error) {
     return sendAppointmentError(error, res, next);
   }

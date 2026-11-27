@@ -49,6 +49,67 @@ async function getWorkshop() {
   return readJson(workshopFile);
 }
 
+function updateWorkshopSettings(input) {
+  const operation = reservationQueue.then(async () => {
+    const [services, workshop] = await Promise.all([getServices(), getWorkshop()]);
+    const submittedServices = input?.services;
+    const submittedWorkshop = input?.workshop;
+
+    if (!Array.isArray(submittedServices) || submittedServices.length !== services.length || !submittedWorkshop || typeof submittedWorkshop !== 'object') {
+      throw Object.assign(new Error('La configuración enviada está incompleta.'), { code: 'INVALID' });
+    }
+
+    const byId = new Map(submittedServices.map((service) => [service?.id, service]));
+    const updatedServices = services.map((current) => {
+      const submitted = byId.get(current.id);
+      if (!submitted || typeof submitted.enabled !== 'boolean' || typeof submitted.suppliesAvailable !== 'boolean') {
+        throw Object.assign(new Error('Revisá la disponibilidad y los insumos de cada servicio.'), { code: 'INVALID' });
+      }
+      const name = String(submitted.name || '').trim();
+      const description = String(submitted.description || '').trim();
+      const price = Number(submitted.estimatedPrice);
+      const duration = Number(submitted.durationMinutes);
+      if (!name || name.length > 100 || description.length > 500 || !Number.isFinite(price) || price < 0 || price > 100000000
+        || !Number.isInteger(duration) || duration < 15 || duration > 1440) {
+        throw Object.assign(new Error('Cada servicio requiere nombre, precio y duración válidos.'), { code: 'INVALID' });
+      }
+      return { ...current, name, description, estimatedPrice: price, durationMinutes: duration, enabled: submitted.enabled, suppliesAvailable: submitted.suppliesAvailable };
+    });
+
+    const openingTime = submittedWorkshop.openingTime;
+    const closingTime = submittedWorkshop.closingTime;
+    const businessDays = submittedWorkshop.businessDays;
+    const slotIntervalMinutes = Number(submittedWorkshop.slotIntervalMinutes);
+    const maxDailyAppointments = Number(submittedWorkshop.maxDailyAppointments);
+    const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    const minutes = (value) => Number(value.slice(0, 2)) * 60 + Number(value.slice(3, 5));
+    if (!timePattern.test(openingTime || '') || !timePattern.test(closingTime || '') || minutes(closingTime) <= minutes(openingTime)
+      || !Array.isArray(businessDays) || !businessDays.length || businessDays.some((day) => !Number.isInteger(day) || day < 1 || day > 7)
+      || new Set(businessDays).size !== businessDays.length || !Number.isInteger(slotIntervalMinutes) || slotIntervalMinutes < 15 || slotIntervalMinutes > 240
+      || !Number.isInteger(maxDailyAppointments) || maxDailyAppointments < 1 || maxDailyAppointments > 100) {
+      throw Object.assign(new Error('Revisá los días, el horario de atención y la capacidad diaria.'), { code: 'INVALID' });
+    }
+
+    const updatedWorkshop = { ...workshop, openingTime, closingTime, businessDays: [...businessDays].sort(), slotIntervalMinutes, maxDailyAppointments };
+    const tempServices = `${servicesFile}.${process.pid}.${Date.now()}.tmp`;
+    const tempWorkshop = `${workshopFile}.${process.pid}.${Date.now()}.tmp`;
+    try {
+      await Promise.all([
+        fs.writeFile(tempServices, `${JSON.stringify(updatedServices, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 }),
+        fs.writeFile(tempWorkshop, `${JSON.stringify(updatedWorkshop, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 })
+      ]);
+      await fs.rename(tempServices, servicesFile);
+      await fs.rename(tempWorkshop, workshopFile);
+    } catch (error) {
+      await Promise.all([fs.rm(tempServices, { force: true }), fs.rm(tempWorkshop, { force: true })]);
+      throw error;
+    }
+    return { services: updatedServices, workshop: updatedWorkshop };
+  });
+  reservationQueue = operation.catch(() => {});
+  return operation;
+}
+
 async function readAppointments() {
   return readJson(appointmentsFile);
 }
@@ -82,6 +143,32 @@ function getQuoteStatus(service, workshop) {
   return workshop.quoteBaseIsSymbolic || service.estimatedPriceIsSymbolic ? 'provisoria' : 'definitiva';
 }
 
+const VEHICLE_STATUSES = ['En Taller', 'En Reparación', 'Esperando Repuesto', 'Listo para Retirar'];
+const DELAY_GRACE_MINUTES = 15;
+
+function getVehicleStatusDetails(appointment, timeZone, now = new Date()) {
+  const status = VEHICLE_STATUSES.includes(appointment.vehicleStatus) ? appointment.vehicleStatus : null;
+  const [year, month, day] = appointment.date.split('-').map(Number);
+  const [hours, minutes] = appointment.startTime.split(':').map(Number);
+  const scheduledStart = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+  const workshopTime = localDateParts(scheduledStart, timeZone);
+  const offsetMinutes = Date.UTC(year, month - 1, day, hours, minutes)
+    - Date.UTC(Number(workshopTime.year), Number(workshopTime.month) - 1, Number(workshopTime.day), Number(workshopTime.hour), Number(workshopTime.minute));
+  scheduledStart.setTime(scheduledStart.getTime() + offsetMinutes);
+  const elapsedMinutes = Math.max(0, Math.floor((now.getTime() - scheduledStart.getTime()) / 60000));
+  const estimatedDuration = Number(appointment.durationMinutes);
+  const delayed = appointment.status === 'confirmado'
+    && status !== 'Listo para Retirar'
+    && Number.isFinite(estimatedDuration)
+    && elapsedMinutes >= estimatedDuration + DELAY_GRACE_MINUTES;
+  return {
+    vehicleStatus: status,
+    vehicleStatusUpdatedAt: appointment.vehicleStatusUpdatedAt || null,
+    isDelayed: delayed,
+    delayThresholdMinutes: Number.isFinite(estimatedDuration) ? estimatedDuration + DELAY_GRACE_MINUTES : null
+  };
+}
+
 function countsTowardDailyLimit(appointment) {
   return ['solicitado', 'confirmado'].includes(appointment.status);
 }
@@ -91,7 +178,7 @@ function slotIsAvailable({ service, date, startTime, workshop, appointments }) {
   const closing = toMinutes(workshop.closingTime);
   const start = toMinutes(startTime);
   const end = start + service.durationMinutes;
-  if (!Number.isInteger(start) || start < opening || start % workshop.slotIntervalMinutes !== opening % workshop.slotIntervalMinutes || end > closing) return false;
+  if (!Number.isInteger(start) || start < opening || (start - opening) % workshop.slotIntervalMinutes !== 0 || end > closing) return false;
   const active = appointments.filter((appointment) => appointment.date === date
     && countsTowardDailyLimit(appointment)
     && start < toMinutes(appointment.endTime)
@@ -117,7 +204,7 @@ function validateBookingDate(date, workshop) {
   const todayString = `${today.year}-${today.month}-${today.day}`;
   if (date < todayString) return { code: 'NOT_BOOKABLE', message: 'Elegí una fecha de hoy en adelante.' };
 
-  const weekday = parsedDate.getUTCDay();
+  const weekday = parsedDate.getUTCDay() || 7;
   if (!workshop.businessDays.includes(weekday)) return { code: 'NOT_BOOKABLE', message: 'El taller no recibe vehículos ese día.' };
 
   if (date === todayString) {
@@ -241,10 +328,75 @@ function createAppointment(input, userId) {
 }
 
 async function listAppointmentsForUser(userId) {
-  const appointments = await readAppointments();
+  const [appointments, workshop] = await Promise.all([readAppointments(), getWorkshop()]);
   return appointments
     .filter((appointment) => appointment.userId === userId)
+    .map((appointment) => ({ ...appointment, ...getVehicleStatusDetails(appointment, workshop.timeZone) }))
     .sort((a, b) => `${a.date}T${a.startTime}`.localeCompare(`${b.date}T${b.startTime}`));
+}
+
+function getAppointmentStartDate(appointment, timeZone) {
+  const [year, month, day] = appointment.date.split('-').map(Number);
+  const [hours, minutes] = appointment.startTime.split(':').map(Number);
+  const utcGuess = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+  const local = localDateParts(utcGuess, timeZone);
+  const offset = Date.UTC(year, month - 1, day, hours, minutes)
+    - Date.UTC(Number(local.year), Number(local.month) - 1, Number(local.day), Number(local.hour), Number(local.minute));
+  return new Date(utcGuess.getTime() + offset);
+}
+
+function cancelAppointment(appointmentId, userId) {
+  const operation = reservationQueue.then(async () => {
+    const [appointments, workshop] = await Promise.all([readAppointments(), getWorkshop()]);
+    const appointment = appointments.find((item) => item.id === appointmentId && item.userId === userId);
+    if (!appointment) throw Object.assign(new Error('No encontramos ese turno en tu cuenta.'), { code: 'NOT_FOUND' });
+    if (appointment.status !== 'solicitado' && appointment.status !== 'confirmado') {
+      throw Object.assign(new Error('Solo podés cancelar solicitudes pendientes o turnos aprobados.'), { code: 'NOT_CANCELLABLE' });
+    }
+    const cutoffHours = Number(workshop.cancellationCutoffHours) || 2;
+    const now = new Date();
+    now.setSeconds(0, 0);
+    const minutesUntilStart = (getAppointmentStartDate(appointment, workshop.timeZone).getTime() - now.getTime()) / 60000;
+    if (minutesUntilStart < cutoffHours * 60) {
+      throw Object.assign(new Error(`Podés cancelar hasta ${cutoffHours} horas antes del turno.`), { code: 'CANCELLATION_CUTOFF' });
+    }
+    const cancelledAt = new Date().toISOString();
+    appointment.status = 'cancelado';
+    appointment.cancelledAt = cancelledAt;
+    appointment.cancelledBy = userId;
+    appointment.updatedAt = cancelledAt;
+    const writeOperation = writeJsonAtomic(appointmentsFile, appointments);
+    writeQueue = writeOperation.catch(() => {});
+    await writeOperation;
+    return appointment;
+  });
+  reservationQueue = operation.catch(() => {});
+  return operation;
+}
+
+async function getDailyVehicleReport(date) {
+  const [appointments, users, workshop] = await Promise.all([readAppointments(), readUsers(), getWorkshop()]);
+  const parts = date ? parseDate(date) : null;
+  if (date && !parts) throw Object.assign(new Error('La fecha del reporte no es válida.'), { code: 'INVALID' });
+  const now = localDateParts(new Date(), workshop.timeZone);
+  const reportDate = date || `${now.year}-${now.month}-${now.day}`;
+  const usersById = new Map(users.map((user) => [user.id, user]));
+  const vehicles = appointments
+    .filter((appointment) => appointment.date === reportDate
+      && (appointment.status === 'finalizado' || appointment.status === 'confirmado' && appointment.vehicleStatus !== 'Listo para Retirar'))
+    .map((appointment) => ({
+      receiptNumber: appointment.id.slice(0, 8).toUpperCase(),
+      customerName: usersById.get(appointment.userId)?.nombre || 'Cliente no disponible',
+      vehicleModel: appointment.vehicle?.model || 'Modelo no informado',
+      serviceName: appointment.serviceName,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+      liftName: appointment.liftName || 'Sin elevador asignado',
+      vehicleStatus: appointment.vehicleStatus || (appointment.status === 'finalizado' ? 'Listo para Retirar' : 'En Taller'),
+      status: appointment.status
+    }))
+    .sort((a, b) => a.startTime.localeCompare(b.startTime));
+  return { date: reportDate, totalVehicles: vehicles.length, vehicles };
 }
 
 async function listAppointmentsForManagement() {
@@ -268,12 +420,50 @@ async function listAppointmentsForManagement() {
         && freeCapacity > unassignedCount);
       return {
         ...appointment,
+        ...getVehicleStatusDetails(appointment, workshop.timeZone),
         receiptNumber: appointment.id.slice(0, 8).toUpperCase(),
         customer: customer ? { name: customer.nombre, email: customer.email, phone: customer.telefono || '' } : { name: 'Cuenta no disponible', email: '', phone: '' },
         assignableLifts: countsTowardDailyLimit(appointment) ? assignableLifts : []
       };
     })
     .sort((a, b) => `${a.date}T${a.startTime}`.localeCompare(`${b.date}T${b.startTime}`));
+}
+
+async function getWorkshopDashboard() {
+  const [appointments, services, users, workshop] = await Promise.all([
+    readAppointments(), getServices(), readUsers(), getWorkshop()
+  ]);
+  const nowParts = localDateParts(new Date(), workshop.timeZone);
+  const today = `${nowParts.year}-${nowParts.month}-${nowParts.day}`;
+  const currentMinute = Number(nowParts.hour) * 60 + Number(nowParts.minute);
+  const activeToday = appointments.filter((appointment) => appointment.date === today && countsTowardDailyLimit(appointment));
+  const demandCounts = new Map();
+  appointments.filter((appointment) => appointment.date === today && appointment.status !== 'cancelado').forEach((appointment) => {
+    demandCounts.set(appointment.serviceId, (demandCounts.get(appointment.serviceId) || 0) + 1);
+  });
+  const mostDemandedServices = services
+    .map((service) => ({ id: service.id, name: service.name, appointments: demandCounts.get(service.id) || 0 }))
+    .sort((a, b) => b.appointments - a.appointments || a.name.localeCompare(b.name, 'es'));
+  const mechanics = users.filter((user) => user.role === 'mecanico');
+  const mechanicsAvailability = mechanics.map((mechanic) => {
+    const activeLift = workshop.lifts.find((item) => item.id === mechanic.liftId);
+    const activeJob = activeToday.find((appointment) => appointment.status === 'confirmado'
+      && appointment.liftId === mechanic.liftId
+      && appointment.vehicleStatus !== 'Listo para Retirar'
+      && currentMinute >= toMinutes(appointment.startTime)
+      && currentMinute < toMinutes(appointment.endTime));
+    const available = !activeJob && activeLift?.enabled !== false;
+    return { id: mechanic.id, name: mechanic.nombre, liftId: mechanic.liftId, liftName: activeLift?.name || 'Sin elevador', available };
+  });
+  return {
+    date: today,
+    mostDemandedServices,
+    mechanics: {
+      available: mechanicsAvailability.filter((mechanic) => mechanic.available).length,
+      total: mechanicsAvailability.length,
+      list: mechanicsAvailability
+    }
+  };
 }
 
 async function listAppointmentsForMechanic(userId) {
@@ -297,7 +487,8 @@ async function listAppointmentsForMechanic(userId) {
       date: appointment.date,
       startTime: appointment.startTime,
       endTime: appointment.endTime,
-      durationMinutes: appointment.durationMinutes
+      durationMinutes: appointment.durationMinutes,
+      ...getVehicleStatusDetails(appointment, workshop.timeZone)
     }))
     .sort((a, b) => `${a.date}T${a.startTime}`.localeCompare(`${b.date}T${b.startTime}`));
   return {
@@ -430,9 +621,12 @@ function updateAppointmentStatus(appointmentId, status, managerId) {
       if (appointment.status !== 'confirmado') {
         throw Object.assign(new Error('Solo podés finalizar un turno aprobado.'), { code: 'ALREADY_REVIEWED' });
       }
+      const completedAt = new Date().toISOString();
       appointment.status = 'finalizado';
+      appointment.vehicleStatus = 'Listo para Retirar';
+      appointment.vehicleStatusUpdatedAt = completedAt;
       appointment.completedBy = managerId;
-      appointment.completedAt = new Date().toISOString();
+      appointment.completedAt = completedAt;
       appointment.updatedAt = appointment.completedAt;
       const writeOperation = writeJsonAtomic(appointmentsFile, appointments);
       writeQueue = writeOperation.catch(() => {});
@@ -458,18 +652,53 @@ function updateAppointmentStatus(appointmentId, status, managerId) {
   return operation;
 }
 
+function updateVehicleStatus(appointmentId, status, managerId) {
+  const operation = reservationQueue.then(async () => {
+    if (!VEHICLE_STATUSES.includes(status)) {
+      throw Object.assign(new Error('Elegí un estado válido para el vehículo.'), { code: 'INVALID' });
+    }
+    const appointments = await readAppointments();
+    const appointment = appointments.find((item) => item.id === appointmentId);
+    if (!appointment) throw Object.assign(new Error('No encontramos ese turno.'), { code: 'NOT_FOUND' });
+    if (appointment.status !== 'confirmado' && !(appointment.status === 'finalizado' && status === 'Listo para Retirar')) {
+      throw Object.assign(new Error('Solo podés actualizar el estado de un trabajo aprobado.'), { code: 'ALREADY_REVIEWED' });
+    }
+    const updatedAt = new Date().toISOString();
+    appointment.vehicleStatus = status;
+    appointment.vehicleStatusUpdatedAt = updatedAt;
+    appointment.vehicleStatusUpdatedBy = managerId;
+    if (status === 'Listo para Retirar' && appointment.status === 'confirmado') {
+      appointment.status = 'finalizado';
+      appointment.completedBy = managerId;
+      appointment.completedAt = updatedAt;
+    }
+    appointment.updatedAt = updatedAt;
+    const writeOperation = writeJsonAtomic(appointmentsFile, appointments);
+    writeQueue = writeOperation.catch(() => {});
+    await writeOperation;
+    return appointment;
+  });
+  reservationQueue = operation.catch(() => {});
+  return operation;
+}
+
 module.exports = {
   createAppointment,
   ensureAppointmentStore,
   getAvailability,
   getManagementLiftStatuses,
+  getWorkshopDashboard,
   getServices,
   getWorkshop,
+  updateWorkshopSettings,
   listMechanicsForManagement,
   listAppointmentsForMechanic,
   listAppointmentsForManagement,
   listAppointmentsForUser,
+  cancelAppointment,
+  getDailyVehicleReport,
   updateAppointmentStatus,
+  updateVehicleStatus,
   updateAppointmentLift,
   updateLiftEnabled,
   assignMechanicToLift

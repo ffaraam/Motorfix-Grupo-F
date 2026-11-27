@@ -30,7 +30,7 @@ Abrir <http://localhost:3000>.
 
 ## API REST
 
-Las rutas usan JSON cuando reciben un cuerpo y sesiones mediante cookie `motorfix.sid`. Salvo la ruta pública de seguimiento, las rutas de turnos requieren sesión. Los permisos se indican por endpoint.
+Las rutas usan JSON cuando reciben un cuerpo y sesiones mediante cookie `motorfix.sid`. Las rutas de turnos requieren sesión. Los permisos se indican por endpoint.
 
 ### Autenticación
 
@@ -41,7 +41,7 @@ Las rutas usan JSON cuando reciben un cuerpo y sesiones mediante cookie `motorfi
 | `GET` | `/api/auth/me` | Devuelve la identidad de la sesión actual. | Requiere sesión. |
 | `POST` | `/api/auth/logout` | Cierra la sesión actual. | Cookie de sesión. |
 
-### Clientes y seguimiento
+### Clientes
 
 | Método | Ruta | Permiso | Función y datos |
 |---|---|---|---|
@@ -50,7 +50,6 @@ Las rutas usan JSON cuando reciben un cuerpo y sesiones mediante cookie `motorfi
 | `POST` | `/api/appointments` | Cliente | Crea una solicitud. JSON: `{ "serviceId", "vehicle": { "make", "model" }, "date", "startTime" }`. |
 | `GET` | `/api/appointments/mine` | Cliente | Lista los turnos e historial del cliente autenticado. |
 | `PATCH` | `/api/appointments/:appointmentId/cancel` | Cliente | Cancela un turno propio que cumpla las reglas de cancelación. No requiere cuerpo. |
-| `GET` | `/api/appointments/public/vehicle-statuses` | Público | Lista únicamente `model` y `status` de vehículos con trabajos activos. |
 
 ### Jefe de taller
 
