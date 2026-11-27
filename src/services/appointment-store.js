@@ -464,6 +464,7 @@ module.exports = {
   getAvailability,
   getManagementLiftStatuses,
   getServices,
+  getWorkshop,
   listMechanicsForManagement,
   listAppointmentsForMechanic,
   listAppointmentsForManagement,
