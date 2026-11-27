@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://motorfix-grupo-f.onrender.com/$1",
+      "permanent": false
+    }
+  ]
+}
